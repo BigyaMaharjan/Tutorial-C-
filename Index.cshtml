@@ -1,0 +1,143 @@
+﻿@model StudentManagement.Models.StudentVM
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>Student Add/Update</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" asp-area="" asp-controller="Student" asp-action="AddUpdateStudent">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="StudentId" name="StudentId" />
+                <div class="row mb-3">
+                    <div class="col-12"><label for="FullName">Full Name</label></div>
+                    <div class="col-12"><input type="text" class="form-control" name="FullName" id="FullName" placeholder="Enter Name" /></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12"><label for="EmailAddress">EmailAddress</label></div>
+                    <div class="col-12"><input type="text" class="form-control" name="EmailAddress" id="EmailAddress" placeholder="Enter Name" /></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12"><label for="City">City</label></div>
+                    <div class="col-12"><input type="text" class="form-control" name="City" id="City" placeholder="Enter Name" /></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            @{
+                if (TempData["SuccessMsg"] != null)
+                {
+                    <h2 class="bg-success">@TempData["SuccessMsg"]</h2>
+                }
+                if (TempData["ErrorMsg"] != null)
+                {
+                    <h2 class="bg-danger">@TempData["ErrorMsg"]</h2>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<h1>Student List</h1>
+<div class="container">
+    <table class="table table-bordered">
+        <tr>
+            <th>Student Id</th>
+            <th>Full Name</th>
+            <th>Email Address</th>
+            <th>City</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        @{
+            if (Model.StudentList != null && Model.StudentList.Count > 0)
+            {
+                foreach (var iteam in Model.StudentList)
+                {
+                    <tr>
+                        <td>@iteam.StudentId</td>
+                        <td>@iteam.FullName</td>
+                        <td>@iteam.EmailAddress</td>
+                        <td>@iteam.City</td>
+                        <td>@iteam.CreationDate.ToString("dd-MM-yyyy")</td>
+                        <td>
+
+
+                            <span data-studentid="@iteam.StudentId" class="spnDelStudent">Delete</span>
+
+
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </table>
+</div>
+
+
+<script src="./js/JQueryjs.js">
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".spnDelStudent").click(function () {
+            var id = $(this).data('studentid');
+
+
+            $.ajax({
+                type: "POST",
+
+                url: '@Url.Action("DeleteStudent", "Student")',
+                data: { "StudentId": id },
+                success: function (data) {
+                    console.log(data)
+                },
+                complete: function (data) {
+                    alert(data);
+                },
+                failure: function (jqXHR, textStatus, errorThrown) {
+                    alert("Error Occured! Please try again");
+                }
+            });
+        });
+    });
+
+
+
+
+
+    function DeleteStudentRecord(StudentIdd) {
+        alert(StudentIdd);
+
+        //let response = confirm("Do you want to Delete this Record");
+
+        //if(response){
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("DeleteStudent", "Student")',
+            data: { "StudentId": StudentIdd },
+            success: function (data) {
+                alert(data)
+            },
+            complete: function (data) {
+                alert(data);
+            },
+            failure: function (jqXHR, textStatus, errorThrown) {
+                alert("Error Occured! Please try again");
+            }
+        });
+        // }
+    }
+
+</script>
+
+
